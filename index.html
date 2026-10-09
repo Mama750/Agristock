@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#2e7d32">
+<title>चन्द्रकला कृषि केंद्र</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,"Noto Sans Devanagari",sans-serif;background:#f4f7f4;color:#183018}
+header{background:#2e7d32;color:white;padding:16px 14px;position:sticky;top:0;z-index:5}
+h1{font-size:21px;margin:0 0 4px}.sub{font-size:12px;opacity:.9}
+nav{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:8px;background:white;position:sticky;top:68px;z-index:4;border-bottom:1px solid #ddd}
+nav button{border:0;background:#edf5ed;padding:10px 4px;border-radius:10px;font-size:12px;color:#245a27}nav button.active{background:#2e7d32;color:#fff}
+main{padding:12px;max-width:700px;margin:auto}.page{display:none}.page.active{display:block}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}.card{background:#fff;border-radius:14px;padding:14px;box-shadow:0 1px 5px #0001}.num{font-size:25px;font-weight:bold;margin-top:5px}
+.btn{border:0;border-radius:10px;padding:11px 13px;background:#2e7d32;color:white;font-weight:bold}.btn.secondary{background:#e8f1e8;color:#245a27}.btn.danger{background:#c62828}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+form,.panel{background:white;padding:14px;border-radius:14px;box-shadow:0 1px 5px #0001;margin-bottom:12px}
+label{display:block;font-size:13px;font-weight:bold;margin:9px 0 4px}input,select{width:100%;padding:11px;border:1px solid #ccd8cc;border-radius:9px;font-size:15px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}.search{margin-bottom:10px}
+.product{display:grid;grid-template-columns:58px 1fr auto;gap:10px;align-items:center;background:#fff;border-radius:12px;padding:10px;margin:8px 0;box-shadow:0 1px 4px #0001}
+.product img{width:58px;height:58px;border-radius:10px;object-fit:cover;background:#eee}.muted{color:#687568;font-size:12px}.stock{font-weight:bold}.low{color:#c62828}.actions button{margin:2px;padding:6px 8px;border:0;border-radius:7px}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:12px}th,td{padding:8px;border-bottom:1px solid #eee;text-align:left}.empty{text-align:center;padding:25px;color:#788}
+.small{font-size:11px}.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#183018;color:white;padding:10px 16px;border-radius:20px;display:none;z-index:20}
+</style>
+</head>
+<body>
+<header><h1>🌾 चन्द्रकला कृषि केंद्र</h1><div class="sub">Chandrakala Krishi Kendra • Stock & Shop Manager</div><div class="sub">👤 संचालक: सचिन मर्सकोले • 📞 7692859935</div></header>
+<nav>
+<button onclick="showPage('home')" class="active">🏠 Home</button>
+<button onclick="showPage('products')">📦 सामान</button>
+<button onclick="showPage('sale')">🧾 बिक्री</button>
+<button onclick="showPage('customers')">👥 ग्राहक</button>
+<button onclick="showPage('suppliers')">🚚 Supplier</button>
+<button onclick="showPage('reports')">📊 रिपोर्ट</button>
+</nav>
+<main>
+<section id="home" class="page active">
+<div class="cards">
+<div class="card">कुल सामान<div class="num" id="dProducts">0</div></div>
+<div class="card">कुल स्टॉक<div class="num" id="dStock">0</div></div>
+<div class="card">आज की बिक्री<div class="num">₹<span id="dSales">0</span></div></div>
+<div class="card">कम स्टॉक<div class="num" id="dLow">0</div></div>
+</div>
+<div class="panel" style="margin-top:12px"><b>⚡ Quick Actions</b><div class="row" style="margin-top:10px">
+<button class="btn" onclick="showPage('products');document.getElementById('pname').focus()">+ सामान जोड़ें</button>
+<button class="btn secondary" onclick="showPage('sale')">बिक्री दर्ज करें</button>
+</div></div>
+<div class="panel"><b>⚠️ Low Stock</b><div id="lowList"></div></div>
+</section>
+
+<section id="products" class="page">
+<form onsubmit="saveProduct(event)">
+<h3 id="formTitle">➕ नया सामान जोड़ें</h3>
+<input type="hidden" id="editId">
+<label>सामान का नाम / Product Name *</label><input id="pname" required placeholder="जैसे: यूरिया 45kg">
+<div class="grid2"><div><label>Category</label><select id="cat"><option>बीज</option><option>खाद</option><option>कीटनाशक</option><option>जैविक उत्पाद</option><option>कृषि उपकरण</option><option>अन्य</option></select></div>
+<div><label>Unit</label><select id="unit"><option>पैकेट</option><option>बोरी</option><option>किलो</option><option>लीटर</option><option>बोतल</option><option>पीस</option></select></div></div>
+<div class="grid2"><div><label>Purchase Rate ₹</label><input id="buy" type="number" min="0" step="0.01"></div><div><label>Selling Rate ₹</label><input id="sell" type="number" min="0" step="0.01"></div></div>
+<div class="grid2"><div><label>Current Stock</label><input id="stock" type="number" min="0" step="0.01" value="0"></div><div><label>Low Stock Limit</label><input id="min" type="number" min="0" step="0.01" value="5"></div></div>
+<label>Product Code / Barcode (optional)</label><input id="code" placeholder="SKU / Barcode">
+<label>Batch No. (optional)</label><input id="batch" placeholder="Batch number">
+<label>Expiry Date (optional)</label><input id="expiry" type="date">
+<label>Product Photo</label><input id="photo" type="file" accept="image/*">
+<div class="row" style="margin-top:12px"><button class="btn" id="saveBtn">Save / सेव करें</button><button type="button" class="btn secondary" onclick="resetForm()">Clear</button></div>
+</form>
+<input class="search" id="search" oninput="renderProducts()" placeholder="🔎 सामान खोजें...">
+<div id="productList"></div>
+</section>
+
+<section id="sale" class="page">
+<div class="panel">
+<h3>🧾 बिक्री दर्ज करें</h3>
+<label>Product / सामान</label><select id="saleProduct" onchange="salePrice()"></select>
+<div class="grid2"><div><label>Quantity</label><input id="saleQty" type="number" min="0.01" step="0.01" value="1"></div><div><label>Rate ₹</label><input id="saleRate" type="number" min="0" step="0.01"></div></div>
+<label>Customer / ग्राहक</label><select id="customerSelect"><option value="">Cash Customer / नकद</option></select>
+<label>Payment</label><select id="payment"><option>Cash</option><option>UPI</option><option>Credit / उधार</option></select>
+<label>Customer Name (optional)</label><input id="customer" placeholder="ग्राहक का नाम">
+<div class="row" style="margin-top:12px"><button class="btn" onclick="addSale()">बिक्री सेव करें</button></div>
+</div>
+<div class="panel"><b>आज की बिक्री</b><div id="todaySales"></div></div>
+<div class="panel"><b>🧾 Last Invoice</b><div id="lastInvoice">बिक्री के बाद बिल यहाँ दिखेगा।</div></div>
+</section>
+
+
+<section id="customers" class="page">
+<div class="panel">
+<h3>👥 ग्राहक / उधारी</h3>
+<div class="grid2">
+<div><label>ग्राहक नाम</label><input id="cname" placeholder="नाम"></div>
+<div><label>मोबाइल</label><input id="cphone" placeholder="मोबाइल नंबर"></div>
+</div>
+<label>पता</label><input id="caddr" placeholder="पता">
+<label>Opening Due ₹</label><input id="cdue" type="number" min="0" step="0.01" value="0">
+<button class="btn" style="margin-top:10px" onclick="addCustomer()">ग्राहक जोड़ें</button>
+</div>
+<div id="customerList"></div>
+</section>
+
+<section id="suppliers" class="page">
+<div class="panel">
+<h3>🚚 Supplier / सप्लायर</h3>
+<div class="grid2">
+<div><label>Supplier नाम</label><input id="sname" placeholder="नाम/कंपनी"></div>
+<div><label>मोबाइल</label><input id="sphone" placeholder="मोबाइल नंबर"></div>
+</div>
+<label>पता</label><input id="saddr" placeholder="पता">
+<label>Opening Payable ₹</label><input id="sdue" type="number" min="0" step="0.01" value="0">
+<button class="btn" style="margin-top:10px" onclick="addSupplier()">Supplier जोड़ें</button>
+</div>
+<div id="supplierList"></div>
+</section>
+
+<section id="reports" class="page">
+<div class="panel"><h3>📊 Stock Report</h3><div id="stockReport"></div></div>
+<div class="panel"><h3>💰 Sales History</h3><div id="salesReport"></div></div>
+<div class="panel"><h3>📈 Profit / Loss</h3><div id="profitReport"></div></div>
+<div class="panel"><h3>🔎 Barcode / QR</h3><div class="muted">इस v2 में हर Product के लिए Code रखा गया है। अगली build में कैमरा scanning जोड़ी जा सकती है।</div></div>
+<div class="panel"><button class="btn secondary" onclick="exportData()">Backup / Export JSON</button>
+<input id="importFile" type="file" accept=".json" style="margin-top:10px" onchange="importData(event)">
+<div class="small muted" style="margin-top:6px">Backup फ़ाइल संभालकर रखें।</div></div>
+</section>
+</main><div id="toast" class="toast"></div>
+<script>
+const KEY='ckk_v1';
+let db=JSON.parse(localStorage.getItem(KEY)||'{"products":[],"sales":[],"customers":[],"suppliers":[]}');
+db.customers=db.customers||[];db.suppliers=db.suppliers||[];
+const $=id=>document.getElementById(id);
+function save(){localStorage.setItem(KEY,JSON.stringify(db));renderAll()}
+function showPage(id){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));[...document.querySelectorAll('nav button')].find(b=>b.getAttribute('onclick').includes("'"+id+"'")).classList.add('active');renderAll()}
+function toast(s){$('toast').textContent=s;$('toast').style.display='block';setTimeout(()=>{$('toast').style.display='none'},1800)}
+function readPhoto(file){return new Promise(res=>{if(!file)return res('');let r=new FileReader();r.onload=()=>res(r.result);r.readAsDataURL(file)})}
+async function saveProduct(e){e.preventDefault();let id=$('editId').value;let old=db.products.find(p=>p.id===id);let photo=await readPhoto($('photo').files[0]);let p={id:id||crypto.randomUUID(),name:$('pname').value.trim(),cat:$('cat').value,unit:$('unit').value,buy:+$('buy').value||0,sell:+$('sell').value||0,stock:+$('stock').value||0,min:+$('min').value||0,batch:$('batch').value,code:$('code').value,expiry:$('expiry').value,photo:photo||old?.photo||''};if(old){let i=db.products.findIndex(x=>x.id===id);db.products[i]=p;toast('Product updated / अपडेट हुआ')}else{db.products.push(p);toast('Product added / सामान जुड़ गया')}save();resetForm()}
+function resetForm(){document.querySelector('#products form').reset();$('editId').value='';$('stock').value=0;$('min').value=5;$('code').value='';$('formTitle').textContent='➕ नया सामान जोड़ें';$('saveBtn').textContent='Save / सेव करें'}
+function editProduct(id){let p=db.products.find(x=>x.id===id);$('editId').value=p.id;$('pname').value=p.name;$('cat').value=p.cat;$('unit').value=p.unit;$('buy').value=p.buy;$('sell').value=p.sell;$('stock').value=p.stock;$('min').value=p.min;$('batch').value=p.batch;$('code').value=p.code||'';$('expiry').value=p.expiry;$('formTitle').textContent='✏️ सामान Edit करें';$('saveBtn').textContent='Update / अपडेट';scrollTo(0,0)}
+function deleteProduct(id){if(confirm('यह सामान delete करें?')){db.products=db.products.filter(p=>p.id!==id);save();toast('Deleted / हटाया गया')}}
+function adjust(id,delta){let p=db.products.find(x=>x.id===id);if(!p)return;p.stock=Math.max(0,p.stock+delta);save();toast(delta>0?'Stock बढ़ा दिया':'Stock घटा दिया')}
+function renderProducts(){let q=($('search')?.value||'').toLowerCase();let arr=db.products.filter(p=>(p.name+' '+p.cat+' '+p.batch).toLowerCase().includes(q));$('productList').innerHTML=arr.length?arr.map(p=>`<div class="product"><img src="${p.photo||''}"><div><b>${esc(p.name)}</b><div class="muted">${esc(p.cat)} • ${p.unit} • Sell ₹${p.sell}${p.code?' • Code: '+esc(p.code):''}</div><div class="stock ${p.stock<=p.min?'low':''}">Stock: ${p.stock} ${p.unit} ${p.stock<=p.min?'⚠️':''}</div>${p.expiry?`<div class="muted">Expiry: ${p.expiry}</div>`:''}</div><div class="actions"><button onclick="adjust('${p.id}',1)">+1</button><button onclick="adjust('${p.id}',-1)">−1</button><button onclick="editProduct('${p.id}')">✏️</button><button onclick="deleteProduct('${p.id}')">🗑️</button></div></div>`).join(''):'<div class="empty">अभी कोई सामान नहीं है। ऊपर से Product जोड़ें।</div>'}
+function salePrice(){let p=db.products.find(x=>x.id==$('saleProduct').value);$('saleRate').value=p?.sell||0}
+function addSale(){let p=db.products.find(x=>x.id==$('saleProduct').value),qty=+$('saleQty').value,rate=+$('saleRate').value;if(!p||qty<=0)return;if(qty>p.stock){toast('इतना stock उपलब्ध नहीं है');return}p.stock-=qty;db.sales.push({id:crypto.randomUUID(),date:new Date().toISOString(),product:p.name,productId:p.id,qty,rate,total:qty*rate,customer:$('customer').value});$('customer').value='';save();toast('बिक्री सेव हो गई')}
+function renderSale(){let s=db.sales.filter(x=>new Date(x.date).toDateString()===new Date().toDateString());$('todaySales').innerHTML=s.length?`<table><tr><th>सामान</th><th>Qty</th><th>₹</th></tr>${s.slice().reverse().map(x=>`<tr><td>${esc(x.product)}</td><td>${x.qty}</td><td>${(x.total).toFixed(2)}</td></tr>`).join('')}</table>`:'<div class="empty">आज अभी बिक्री दर्ज नहीं हुई।</div>';let opts=db.products.map(p=>`<option value="${p.id}">${esc(p.name)} — Stock ${p.stock}</option>`).join('');$('saleProduct').innerHTML=opts||'<option>पहले Product जोड़ें</option>';salePrice()}
+
+function addCustomer(){
+let name=$('cname').value.trim();if(!name){toast('नाम डालें');return}
+db.customers.push({id:crypto.randomUUID(),name,phone:$('cphone').value,address:$('caddr').value,due:+$('cdue').value||0});
+$('cname').value='';$('cphone').value='';$('caddr').value='';$('cdue').value=0;save();toast('ग्राहक जुड़ गया');
+}
+function customerPay(id){
+let c=db.customers.find(x=>x.id===id),v=+prompt('जमा राशि ₹')||0;if(v>0){c.due=Math.max(0,(c.due||0)-v);save();toast('जमा दर्ज हो गया')}
+}
+function addSupplier(){
+let name=$('sname').value.trim();if(!name){toast('Supplier नाम डालें');return}
+db.suppliers.push({id:crypto.randomUUID(),name,phone:$('sphone').value,address:$('saddr').value,due:+$('sdue').value||0});
+$('sname').value='';$('sphone').value='';$('saddr').value='';$('sdue').value=0;save();toast('Supplier जुड़ गया');
+}
+function supplierPay(id){
+let s=db.suppliers.find(x=>x.id===id),v=+prompt('भुगतान राशि ₹')||0;if(v>0){s.due=Math.max(0,(s.due||0)-v);save();toast('भुगतान दर्ज हो गया')}
+}
+function renderPeople(){
+$('customerList').innerHTML=db.customers.length?db.customers.map(c=>`<div class="panel"><b>${esc(c.name)}</b><div class="muted">${esc(c.phone||'')} ${esc(c.address||'')}</div><div class="stock ${c.due>0?'low':''}">बाकी: ₹${(c.due||0).toFixed(2)}</div><button class="btn secondary" onclick="customerPay('${c.id}')">जमा दर्ज करें</button></div>`).join(''):'<div class="empty">ग्राहक अभी नहीं हैं।</div>';
+$('supplierList').innerHTML=db.suppliers.length?db.suppliers.map(s=>`<div class="panel"><b>${esc(s.name)}</b><div class="muted">${esc(s.phone||'')} ${esc(s.address||'')}</div><div class="stock ${s.due>0?'low':''}">देना बाकी: ₹${(s.due||0).toFixed(2)}</div><button class="btn secondary" onclick="supplierPay('${s.id}')">भुगतान दर्ज करें</button></div>`).join(''):'<div class="empty">Supplier अभी नहीं हैं।</div>';
+$('customerSelect').innerHTML='<option value="">Cash Customer / नकद</option>'+db.customers.map(c=>`<option value="${c.id}">${esc(c.name)} — Due ₹${(c.due||0).toFixed(0)}</option>`).join('');
+}
+function showInvoice(x){
+$('lastInvoice').innerHTML=`<div id="invoiceBox" style="border:1px dashed #aaa;padding:12px"><h3 style="margin:0">चन्द्रकला कृषि केंद्र</h3><div class="muted">संचालक: सचिन मर्सकोले • मोबाइल: 7692859935</div><div class="muted">Invoice: ${x.id.slice(0,8).toUpperCase()} • ${new Date(x.date).toLocaleString('hi-IN')}</div><hr><b>${esc(x.product)}</b><br>Qty: ${x.qty} × ₹${x.rate.toFixed(2)} = <b>₹${x.total.toFixed(2)}</b><br>Payment: ${esc(x.payment)}<br>Customer: ${esc(x.customer||'Cash')}</div><div class="row" style="margin-top:8px"><button class="btn" onclick="printInvoice()">🖨️ Print / PDF</button><button class="btn secondary" onclick="shareInvoice()">📲 WhatsApp Share</button></div>`;
+}
+function printInvoice(){let box=$('invoiceBox')?.outerHTML;if(!box)return;let w=window.open('','_blank');w.document.write('<html><head><title>Invoice</title></head><body>'+box+'</body></html>');w.document.close();w.print()}
+function shareInvoice(){let x=db.sales[db.sales.length-1];if(!x)return;let t=`चन्द्रकला कृषि केंद्र%0Aसंचालक: सचिन मर्सकोले%0Aमोबाइल: 7692859935%0Aबिल: ${x.id.slice(0,8).toUpperCase()}%0Aसामान: ${encodeURIComponent(x.product)}%0AQty: ${x.qty}%0Aकुल: ₹${x.total.toFixed(2)}%0Aधन्यवाद`;window.open('https://wa.me/?text='+t,'_blank')}
+function renderAll(){let total=db.products.reduce((a,p)=>a+Number(p.stock),0),low=db.products.filter(p=>p.stock<=p.min);let today=db.sales.filter(x=>new Date(x.date).toDateString()===new Date().toDateString()).reduce((a,x)=>a+x.total,0);$('dProducts').textContent=db.products.length;$('dStock').textContent=total;$('dLow').textContent=low.length;$('dSales').textContent=today.toFixed(0);$('lowList').innerHTML=low.length?low.map(p=>`<div style="padding:8px 0;border-bottom:1px solid #eee">${esc(p.name)} — <b class="low">${p.stock} ${p.unit}</b></div>`).join(''):'<div class="muted" style="padding-top:8px">कोई Low Stock नहीं 🎉</div>';renderProducts();renderSale();renderPeople();renderReports()}
+function renderReports(){$('stockReport').innerHTML=db.products.length?`<table><tr><th>Product</th><th>Stock</th><th>Rate</th><th>Value</th></tr>${db.products.map(p=>`<tr><td>${esc(p.name)}</td><td>${p.stock} ${p.unit}</td><td>₹${p.sell}</td><td>₹${(p.stock*p.buy).toFixed(2)}</td></tr>`).join('')}</table>`:'<div class="empty">कोई data नहीं</div>';let profit=db.sales.reduce((a,x)=>a+(x.rate-x.buy)*x.qty,0);
+$('profitReport').innerHTML=`<div style="font-size:28px;font-weight:bold">₹${profit.toFixed(2)}</div><div class="muted">कुल अनुमानित gross profit (बिक्री - खरीद लागत)</div>`;
+$('salesReport').innerHTML=db.sales.length?`<table><tr><th>Date</th><th>Product</th><th>Qty</th><th>Total</th></tr>${db.sales.slice().reverse().map(x=>`<tr><td>${new Date(x.date).toLocaleDateString('hi-IN')}</td><td>${esc(x.product)}</td><td>${x.qty}</td><td>₹${x.total.toFixed(2)}</td></tr>`).join('')}</table>`:'<div class="empty">बिक्री data नहीं</div>'}
+function exportData(){let b=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='chandrakala-krishi-backup.json';a.click()}
+function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{db=JSON.parse(r.result);save();toast('Backup restored')}catch{toast('Backup file गलत है')}};r.readAsText(f)}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+renderAll();
+</script></body></html>
