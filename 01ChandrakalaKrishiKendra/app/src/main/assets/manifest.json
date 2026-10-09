@@ -1,9 +1,0 @@
-{
-  "name": "चन्द्रकला कृषि केंद्र",
-  "short_name": "चन्द्रकला कृषि",
-  "start_url": "./index.html",
-  "display": "standalone",
-  "background_color": "#f4f7f4",
-  "theme_color": "#2e7d32",
-  "lang": "hi"
-}
